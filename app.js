@@ -6,9 +6,7 @@ var fs = require('fs');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var logger = require('morgan');
 
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -22,8 +20,11 @@ if (app.get('env') == 'development') {
 
 var db = mongoose.connect(mongoUri);
 
-var modelsPath = path.join(__dirname, 'models');
+var modelsPath = path.join(__dirname, 'lib/models');
 fs.readdirSync(modelsPath).forEach(function(file) {
+  if (file[0] == '.') {
+    return;
+  }
   require(modelsPath + '/' + file);
 });
 
@@ -31,6 +32,7 @@ fs.readdirSync(modelsPath).forEach(function(file) {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
@@ -40,6 +42,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', function(req, res) {
   res.render('index', {title:'Express'});
 });
+
+var logBrowse = require('./lib/controllers/logBrowse');
+app.post('/api/active-time', logBrowse.logActiveTime);
+app.post('/api/visit-times', logBrowse.logVisitTimes);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {

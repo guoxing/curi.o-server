@@ -1,12 +1,31 @@
+'use strict';
+
 var express = require('express');
 var path = require('path');
+var fs = require('fs');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
 var app = express();
+
+var mongoUri;
+if (app.get('env') == 'development') {
+  mongoUri = 'mongodb://localhost/curio';
+  console.log('running in dev mode');
+}
+
+var db = mongoose.connect(mongoUri);
+
+var modelsPath = path.join(__dirname, 'models');
+fs.readdirSync(modelsPath).forEach(function(file) {
+  require(modelsPath + '/' + file);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

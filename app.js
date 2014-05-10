@@ -16,6 +16,8 @@ var mongoUri;
 if (app.get('env') == 'development') {
   mongoUri = 'mongodb://localhost/curio';
   console.log('running in dev mode');
+} else if (app.get('env') == 'production') {
+  mongoUri = process.env.MONGOHQ_URL;
 }
 
 var db = mongoose.connect(mongoUri);

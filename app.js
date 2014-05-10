@@ -47,6 +47,7 @@ var logBrowse = require('./lib/controllers/logBrowse');
 app.post('/api/active-time', logBrowse.logActiveTime);
 app.post('/api/visit-times', logBrowse.logVisitTimes);
 app.post('/api/answers', logBrowse.logAnswers);
+app.post('/api/estimate-active-time', logBrowse.logEstimateAT);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
